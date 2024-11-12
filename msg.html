@@ -164,7 +164,7 @@
             message: emailBody
           })
           .then(() => {
-            showPopup('Message sent successfully!');
+            showPopup('Your important report was sent!');
             form.reset();
     
             // Wait for the popup to be closed before redirecting
@@ -173,7 +173,7 @@
             }, 2000);
           })
           .catch((error) => {
-            showPopup('Failed to send message: ' + error.message);
+            showPopup('Sorry!Unable to sent your feedback right now!: ' + error.message);
           });
       });
     

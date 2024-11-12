@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SONGTUBE</title>
+    <style>
+        body {
+          font-family: monospace;
+      
+          margin: 0;
+          padding: 0;
+        }
+        .email-form {
+            width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #004FFF;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 49, 255, 1);
+        }
+        h2 {
+            text-align: center;
+            font-size: 1.4rem;
+            color: #FF9500;
+        }
+        label {
+            font-size: 17px;
+            margin-bottom: 6px;
+            display: block;
+            color: #FF9E00;
+        }
+        input, textarea{
+            width: 90%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #FFB900;
+            outline-color:#FF0000;
+            border-radius: 4px;
+        }
+        button {
+            background-color:#FFA204;
+            color: #0019FF;
+            width:95%;
+            padding:10px ;
+            border-radius: 10px;
+            transition: background-color 1.1s;
+        }
+        button:hover {
+            background-color: #FF0000;
+            color: #FFA100;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-form">
+        <h2>Songtube support team</h2>
+        <form id="form">
+            <label for="fromName">Your Name:</label>
+            <input type="text" id="fromName" name="from_name" placeholder="Your Name" required>
+            
+            <label for="subject">Subject:</label>
+            <input type="text" id="subject" placeholder="Subject" required>
+            
+            <label for="emailBody">Message:</label>
+            <textarea id="emailBody" name="message" placeholder="Write your message here" rows="5" required></textarea>
+            
+            <button type="submit" id="button">Send Message</button>
+        </form>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+      import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBH5T2wi7ojbgDCBa4m4cw79XkIS6aCelw",
+        authDomain: "email-25aff.firebaseapp.com",
+        databaseURL: "https://email-25aff-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "email-25aff",
+        storageBucket: "email-25aff.firebasestorage.app",
+        messagingSenderId: "967151595200",
+        appId: "1:967151595200:web:892427d7994dd05c458725"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const database = getDatabase(app);
+
+      // Handle form submission
+      const form = document.getElementById('form');
+      form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const fromName = document.getElementById("fromName").value;
+        const subject = document.getElementById("subject").value;
+        const emailBody = document.getElementById("emailBody").value;
+
+        // Store data in Firebase Realtime Database
+        const newMessageRef = ref(database, 'messages/' + Date.now()); // Unique ID using timestamp
+        set(newMessageRef, {
+          fromName: fromName,
+          subject: subject,
+          message: emailBody
+        })
+        .then(() => {
+          alert('Thank you for giving feedback');
+          form.reset();
+          
+          // Redirect to index.html after successful submission
+          window.location.href = "index.html"; // Redirect to index.html
+        })
+        .catch((error) => {
+          alert('Sorry!we are unable to reed your point '  error.message);
+        });
+      });
+    </script>
+</body>
+</html>

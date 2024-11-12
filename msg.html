@@ -7,7 +7,6 @@
     <style>
         body {
           font-family: monospace;
-      
           margin: 0;
           padding: 0;
         }
@@ -50,17 +49,52 @@
             background-color: #FF0000;
             color: #FFA100;
         }
+
+        /* Popup styles */
+        .popup {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            width: 300px;
+        }
+
+        .popup-button {
+            background-color: #FF9500;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .popup-button:hover {
+            background-color: #FF5722;
+        }
     </style>
 </head>
 <body>
     <div class="email-form">
         <h2>Songtube support team</h2>
-        <form id="form">
+        <form id="form" action="https://formspree.io/f/{your-form-id}" method="POST">
             <label for="fromName">Your Name:</label>
             <input type="text" id="fromName" name="from_name" placeholder="Your Name" required>
             
             <label for="subject">Subject:</label>
-            <input type="text" id="subject" placeholder="Subject" required>
+            <input type="text" id="subject" name="subject" placeholder="Subject" required>
             
             <label for="emailBody">Message:</label>
             <textarea id="emailBody" name="message" placeholder="Write your message here" rows="5" required></textarea>
@@ -69,11 +103,16 @@
         </form>
     </div>
 
-    <!-- Firebase SDK -->
-    <script type="module">
+    <!-- Popup Modal -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <h3 id="popupMessage">Message sent successfully!</h3>
+            <button class="popup-button" onclick="closePopup()">OK</button>
+        </div>
+    </div><script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
       import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
-
+    
       const firebaseConfig = {
         apiKey: "AIzaSyBH5T2wi7ojbgDCBa4m4cw79XkIS6aCelw",
         authDomain: "email-25aff.firebaseapp.com",
@@ -83,37 +122,50 @@
         messagingSenderId: "967151595200",
         appId: "1:967151595200:web:892427d7994dd05c458725"
       };
-
+    
       const app = initializeApp(firebaseConfig);
       const database = getDatabase(app);
-
+    
       // Handle form submission
       const form = document.getElementById('form');
       form.addEventListener('submit', function(event) {
         event.preventDefault();
-
+    
         const fromName = document.getElementById("fromName").value;
         const subject = document.getElementById("subject").value;
         const emailBody = document.getElementById("emailBody").value;
-
+    
         // Store data in Firebase Realtime Database
         const newMessageRef = ref(database, 'messages/' + Date.now()); // Unique ID using timestamp
         set(newMessageRef, {
-          fromName: fromName,
-          subject: subject,
-          message: emailBody
-        })
-        .then(() => {
-          alert('Thank you for giving feedback');
-          form.reset();
-          
-          // Redirect to index.html after successful submission
-          window.location.href = "index.html"; // Redirect to index.html
-        })
-        .catch((error) => {
-          alert('Sorry!we are unable to reed your point '  error.message);
-        });
+            fromName: fromName,
+            subject: subject,
+            message: emailBody
+          })
+          .then(() => {
+            showPopup('Message sent successfully!');
+            form.reset();
+    
+            // Wait for the popup to be closed before redirecting
+            setTimeout(() => {
+              window.location.href = "index.html"; // Redirect to index.html
+            }, 2000); // Delay redirection to allow popup to be visible
+          })
+          .catch((error) => {
+            showPopup('Failed to send message: ' + error.message);
+          });
       });
+    
+      // Show Popup
+      function showPopup(message) {
+        document.getElementById('popupMessage').textContent = message;
+        document.getElementById('popup').style.display = 'flex';
+      }
+    
+      // Close Popup
+      function closePopup() {
+        document.getElementById('popup').style.display = 'none';
+      }
     </script>
 </body>
 </html>

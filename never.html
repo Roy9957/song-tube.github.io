@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SONGTUBE</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            margin: 0;
+            padding: 0;
+        }
+        .message-list {
+            width: 80%;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #b{
+            text-align: center;
+            color: #FF0000;
+        }
+        .message {
+            padding: 30px;
+            border-bottom: 1px solid #1D00FF;
+        }
+        .message:last-child {
+            border-bottom: none;
+        }
+        .message h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        .message p {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="message-list">
+        <h2 id="b">ALL MSG</h2>
+        <div id="messages"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+      import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBH5T2wi7ojbgDCBa4m4cw79XkIS6aCelw",
+        authDomain: "email-25aff.firebaseapp.com",
+        databaseURL: "https://email-25aff-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "email-25aff",
+        storageBucket: "email-25aff.firebasestorage.app",
+        messagingSenderId: "967151595200",
+        appId: "1:967151595200:web:892427d7994dd05c458725"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const database = getDatabase(app);
+
+      // Get messages from Firebase
+      const messagesRef = ref(database, 'messages');
+      const messagesContainer = document.getElementById('messages');
+
+      // Listen to changes in the database
+      onValue(messagesRef, (snapshot) => {
+        messagesContainer.innerHTML = ''; // Clear previous messages
+        snapshot.forEach((childSnapshot) => {
+          const message = childSnapshot.val();
+          const messageElement = document.createElement('div');
+          messageElement.classList.add('message');
+          messageElement.innerHTML = `
+            <h2>${message.fromName} <small></small></h2>
+            
+            <h3><strong>Subject:</strong> ${message.subject}</h3>
+            <p>${message.message}</p>
+          `;
+          messagesContainer.appendChild(messageElement);
+        });
+      });
+    </script>
+</body>
+</html>
